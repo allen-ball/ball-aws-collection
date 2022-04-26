@@ -1,6 +1,6 @@
 #!/bin/bash
 # ----------------------------------------------------------------------------
-# $Id$
+# user-data.bash
 # ----------------------------------------------------------------------------
 export LANG=en_US.UTF-8
 export LC_ALL=${LANG}
@@ -32,8 +32,7 @@ for key in $(metadata public-keys/); do
     userhome=$(eval echo ~${username})
 
     mkdir -p ${userhome}/.ssh
-    echo "$(metadata public-keys/${key%%=*}/openssh-key)" \
-         >> ${userhome}/.ssh/authorized_keys
+    echo "$(metadata public-keys/${key%%=*}/openssh-key)" >> ${userhome}/.ssh/authorized_keys
     chown -R ${username}:${username} ${userhome}/.ssh
     chmod -R go-rwx ${userhome}/.ssh
 
@@ -74,8 +73,7 @@ if [ -n "${VOLUMES}" ]; then
 
             if [ "${uuid}" != "" -a "${mntpt}" != "" ]; then
                 mkdir -p ${mntpt}
-                echo "UUID=${uuid} ${mntpt} ${fstype} defaults 0 2" \
-                     >> /etc/fstab
+                echo "UUID=${uuid} ${mntpt} ${fstype} defaults 0 2" >> /etc/fstab
             fi
         fi
     done

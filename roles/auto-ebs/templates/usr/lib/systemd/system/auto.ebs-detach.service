@@ -1,4 +1,4 @@
-# $Id$
+# auto.ebs-detach.service
 [Unit]
 Description=/etc/auto.ebs-detach.sh
 After=autofs.service

@@ -1,4 +1,4 @@
-# $Id$
+# main.yml
 ---
 - name: user-data script
   set_fact:

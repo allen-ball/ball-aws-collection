@@ -1,4 +1,4 @@
-# $Id$
+# main.yml
 ---
 - name: package install
   package:
