@@ -5,13 +5,13 @@
 export LANG=en_US.UTF-8
 export LC_ALL=${LANG}
 
-if [ -e /usr/bin/apt]; then
+if [ -e /usr/bin/apt ]; then
     apt -y update
     apt -y install awscli
 else
     yum -y update
 
-    if [ ! -e /usr/libexec/platform-python]; then
+    if [ ! -e /usr/libexec/platform-python ]; then
         yum -y install python
     fi
 
