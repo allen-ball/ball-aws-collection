@@ -6,7 +6,8 @@ export LANG=en_US.UTF-8
 export LC_ALL=${LANG}
 
 if [ -e /usr/bin/apt]; then
-    apt -t install awscli
+    apt -y update
+    apt -y install awscli
 else
     yum -y update
 
