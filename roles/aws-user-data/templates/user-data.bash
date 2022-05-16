@@ -30,10 +30,18 @@ fi
 # Create users and install respective .ssh/authorized_keys for public-keys'
 # metadata
 # ----------------------------------------------------------------------------
+getent group sudo >> /dev/null 2>&1
+
+if [ $? -eq 0 ]; then
+    wheel=sudo
+else
+    wheel=wheel
+fi
+
 for key in $(metadata public-keys/); do
     username=${key#*=}
 
-    useradd -G wheel -m -s /bin/bash -U ${username}
+    useradd -G ${wheel} -m -s /bin/bash -U ${username}
     userhome=$(eval echo ~${username})
 
     mkdir -p ${userhome}/.ssh
