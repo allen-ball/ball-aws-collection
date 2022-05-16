@@ -5,18 +5,22 @@
 export LANG=en_US.UTF-8
 export LC_ALL=${LANG}
 
-yum -y update
+if [ -e /usr/bin/apt]; then
+    apt -t install awscli
+else
+    yum -y update
 
-if [ ! -e /usr/libexec/platform-python]; then
-    yum -y install python
+    if [ ! -e /usr/libexec/platform-python]; then
+        yum -y install python
+    fi
+
+    if [ ! -e /usr/bin/pip -a -x /usr/bin/easy_install ]; then
+        /usr/bin/easy_install --prefix /usr pip
+    fi
+
+    /usr/bin/pip install --prefix /usr --upgrade pip
+    /usr/bin/pip install --prefix /usr --upgrade awscli
 fi
-
-if [ ! -e /usr/bin/pip -a -x /usr/bin/easy_install ]; then
-    /usr/bin/easy_install --prefix /usr pip
-fi
-
-/usr/bin/pip install --prefix /usr --upgrade pip
-/usr/bin/pip install --prefix /usr --upgrade awscli
 # ----------------------------------------------------------------------------
 # Functions
 # ----------------------------------------------------------------------------
