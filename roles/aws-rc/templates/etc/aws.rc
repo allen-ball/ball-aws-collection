@@ -102,7 +102,7 @@ list-attached-volumes() {
 
 # next-unattached-block-device
 next-unattached-block-device() {
-    local attached=($(lsblk -ndo NAME))
+    local attached=($(lsblk -ndo NAME | grep -v loop))
     local available=($(echo -e ${attached[0]:0:-1}{a..z}\\n))
 
     for name in "${attached[@]}"; do
