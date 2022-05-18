@@ -92,6 +92,10 @@ if [ -n "${VOLUMES}" ]; then
     done
 fi
 
-mount -a
+if [ -f /var/run/reboot-required ]; then
+    shutdown -r now
+else
+    mount -a
+fi
 
 exit 0
