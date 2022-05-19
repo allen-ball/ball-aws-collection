@@ -86,6 +86,7 @@ if [ -n "${VOLUMES}" ]; then
 
             if [ "${uuid}" != "" -a "${mntpt}" != "" ]; then
                 mkdir -p ${mntpt}
+                echo "# ${volume} ${device}" >> /etc/fstab
                 echo "UUID=${uuid} ${mntpt} ${fstype} defaults 0 2" >> /etc/fstab
             fi
         fi
