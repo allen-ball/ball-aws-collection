@@ -1,19 +1,5 @@
 # main.yml
 ---
-- name: vpc_cidr_block
-  block:
-    - name: "{{ vpc_id }}"
-      amazon.aws.ec2_vpc_net_info:
-        vpc_ids: "{{ vpc_id }}"
-      register: ec2_vpc_net_info
-    - name: vpc_cidr_block
-      vars:
-        vpc: "{{ ec2_vpc_net_info.vpcs[0] }}"
-      set_fact:
-        vpc_cidr_block: "{{ vpc.cidr_block }}"
-  when:
-    - vpc_cidr_block is not defined
-
 - name: ipify_public_ip
   ipify_facts: api_url=http://api.ipify.org
 #
@@ -30,16 +16,22 @@
         to_port: -1
         cidr_ip: 0.0.0.0/0
 
-- name: vpc-internal security-group
+- name: vpc-internal-subnets security-group
+  vars:
+    json: "{{ ec2_vpc_subnet_info }}"
+    query: >-
+      subnets[].{
+          proto: 'all'
+          from_port: '-1'
+          to_port: '-1'
+          cidr_ip: cidr_block
+      }
+    rules: "{{ json | json_query(query) }}"
   amazon.aws.ec2_group:
-    name: vpc-internal
-    description: Allow VPC internal traffic
+    name: vpc-internal-subnets
+    description: Allow VPC subnets internal traffic
     vpc_id: "{{ vpc_id }}"
-    rules:
-      - proto: all
-        from_port: -1
-        to_port: -1
-        cidr_ip: "{{ vpc_cidr_block }}"
+    rules: "{{ rules }}"
 
 - name: Ansible controller security-group
   amazon.aws.ec2_group:
