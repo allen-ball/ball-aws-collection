@@ -9,7 +9,7 @@
   amazon.aws.ec2_group:
     name: vpc-default
     description: VPC default
-    vpc_id: "{{ vpc_id }}"
+    vpc_id: "{{ vpc_id | default(vpc.id) }}"
     rules:
       - proto: all
         from_port: -1
@@ -30,14 +30,14 @@
   amazon.aws.ec2_group:
     name: vpc-internal-subnets
     description: Allow VPC subnets internal traffic
-    vpc_id: "{{ vpc_id }}"
+    vpc_id: "{{ vpc_id | default(vpc.id) }}"
     rules: "{{ rules }}"
 
 - name: Ansible controller security-group
   amazon.aws.ec2_group:
     name: controller
     description: Ansible controller security group
-    vpc_id: "{{ vpc_id }}"
+    vpc_id: "{{ vpc_id | default(vpc.id) }}"
     rules:
       - rule_desc: Ansible Controller
         proto: tcp
@@ -48,7 +48,7 @@
   amazon.aws.ec2_group:
     name: http
     description: HTTP security group
-    vpc_id: "{{ vpc_id }}"
+    vpc_id: "{{ vpc_id | default(vpc.id) }}"
     rules:
       - rule_desc: HTTP
         proto: tcp
@@ -63,7 +63,7 @@
   ec2_group:
     name: imap+pop3
     description: IMAP+POP3 security group
-    vpc_id: "{{ vpc_id }}"
+    vpc_id: "{{ vpc_id | default(vpc.id) }}"
     rules:
     - rule_desc: POP3
       proto: tcp
@@ -86,7 +86,7 @@
   ec2_group:
     name: smtp
     description: SMTP security group
-    vpc_id: "{{ vpc_id }}"
+    vpc_id: "{{ vpc_id | default(vpc.id) }}"
     rules:
     - rule_desc: SMTP
       proto: tcp
@@ -101,7 +101,7 @@
   amazon.aws.ec2_group:
     name: ssh
     description: SSH security group
-    vpc_id: "{{ vpc_id }}"
+    vpc_id: "{{ vpc_id | default(vpc.id) }}"
     rules:
       - rule_desc: SSH
         proto: tcp
