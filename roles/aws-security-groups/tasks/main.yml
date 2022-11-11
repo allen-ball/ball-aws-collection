@@ -21,9 +21,9 @@
     json: "{{ ec2_vpc_subnet_info }}"
     query: >-
       subnets[].{
-          proto: 'all'
-          from_port: '-1'
-          to_port: '-1'
+          proto: 'all',
+          from_port: '-1',
+          to_port: '-1',
           cidr_ip: cidr_block
       }
     rules: "{{ json | json_query(query) }}"
