@@ -3,8 +3,10 @@ ball-aws-collection
 
 A collection of miscellaneous [Ansible] roles for [AWS].
 
-* [roles/aws-user-data](roles/aws-user-data): [AWS EC2 User Data Shell Script]
-* [roles/auto.ebs](roles/auto.ebs): [automount/autofs Executable Map for Amazon EBS Volumes]
+| Role                                       | Description                                              |
+|--------------------------------------------|----------------------------------------------------------|
+| [roles/aws-user-data](roles/aws-user-data) | [AWS EC2 User Data Shell Script]                         |
+| [roles/auto.ebs](roles/auto.ebs)           | [automount/autofs Executable Map for Amazon EBS Volumes] |
 
 Add to `requirements.yml`:
 
