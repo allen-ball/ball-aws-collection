@@ -9,37 +9,37 @@ metadata() {
     curl -s "http://169.254.169.254/latest/meta-data/$1"
 }
 
+export INSTANCE
 export ZONE
 export REGION
-export INSTANCE
 
-ZONE=$(metadata placement/availability-zone)
-REGION=$(echo "${ZONE}" | sed 's/\(.*\)[a-z]/\1/')
-INSTANCE=$(metadata instance-id)
+# On UNIX, EC2 instance ID is also available in /var/lib/cloud/data/instance-id
+INSTANCE="$(aws sts get-caller-identity --output=text --query=UserId | cut -d : -f 2)"
+ZONE="$(metadata placement/availability-zone)"
+REGION="$(echo "${ZONE}" | sed 's/\(.*\)[a-z]/\1/')"
 
 # ec2 command [argument ...]
 ec2() {
-    aws ec2 --region "${REGION}" "$@"
+    aws ec2 --region="${REGION}" "$@"
 }
 
 # ec2-get-tag-value resource-id key
 ec2-get-tag-value() {
     ec2 describe-tags \
-        --filters Name=resource-id,Values="$1" Name=key,Values="$2" \
-        --output text --query 'Tags[*].Value'
+        --output=text \
+        --filters "Name=resource-id,Values=$1" "Name=key,Values=$2" \
+        --query='Tags[*].Value'
 }
 
 # ec2-set-tag-value resource-id key value
 ec2-set-tag-value() {
-    ec2 delete-tags --resources "$1" --tags Key="$2"
-    ec2 create-tags --resources "$1" --tags Key="$2",Value="$3"
+    ec2 delete-tags --resources="$1" --tags="Key=$2"
+    ec2 create-tags --resources="$1" --tags="Key=$2,Value=$3"
 }
 
 # ec2-get-volume-state volume-id
 ec2-get-volume-state() {
-    ec2 describe-volumes \
-        --volume-ids "$1" \
-        --output text --query 'Volumes[].State'
+    ec2 describe-volumes --output=text --volume-ids="$1" --query='Volumes[].State'
 }
 
 # ec2-get-volume-attachment-instance volume-id
@@ -47,9 +47,9 @@ ec2-get-volume-attachment-instance() {
     local value
 
     value=$(ec2 describe-volumes \
-                --volume-ids "$1" \
-                --query 'Volumes[].Attachments[].InstanceId' \
-                --output text)
+                --output=text \
+                --volume-ids="$1" \
+                --query='Volumes[].Attachments[].InstanceId')
 
     echo "${value}"
 }
@@ -59,9 +59,9 @@ ec2-get-volume-attachment-state() {
     local value
 
     value=$(ec2 describe-volumes \
-                --volume-ids "$1" \
-                --query 'Volumes[].Attachments[].State' \
-                --output text)
+                --output=text \
+                --volume-ids="$1" \
+                --query='Volumes[].Attachments[].State')
 
     echo "${value}"
 }
@@ -71,9 +71,9 @@ ec2-get-volume-attachment-device() {
     local value
 
     value=$(ec2 describe-volumes \
-                --volume-ids "$1" \
-                --query 'Volumes[].Attachments[].Device' \
-                --output text)
+                --output=text \
+                --volume-ids="$1" \
+                --query='Volumes[].Attachments[].Device')
 
     echo "${value}"
 }
@@ -81,10 +81,10 @@ ec2-get-volume-attachment-device() {
 # ec2-attach-volume volume-id device
 ec2-attach-volume() {
     echo "$0": $(ec2 attach-volume \
-                     --instance-id "${INSTANCE}" --volume-id "$1" --device "$2" \
-                     --query '[Device,State,VolumeId]' \
-                     --output text) 1>&2
-    ec2 wait volume-in-use --volume-ids "$1"
+                     --output=text \
+                     --instance-id="${INSTANCE}" --volume-id="$1" --device="$2" \
+                     --query='[Device,State,VolumeId]') 1>&2
+    ec2 wait volume-in-use --volume-ids="$1"
 
     while [ "$(ec2-get-volume-attachment-state "$1")" != "attached" ]; do
         sleep 15
@@ -94,10 +94,10 @@ ec2-attach-volume() {
 # ec2-detach-volume volume-id
 ec2-detach-volume() {
     echo "$0": $(ec2 detach-volume \
-                     --instance-id "${INSTANCE}" --volume-id "$1" \
-                     --query '[Device,State,VolumeId]' \
-                     --output text) 1>&2
-    ec2 wait volume-available --volume-ids "$1"
+                     --output=text \
+                     --instance-id="${INSTANCE}" --volume-id="$1" \
+                     --query='[Device,State,VolumeId]') 1>&2
+    ec2 wait volume-available --volume-ids="$1"
 }
 
 # list-attached-volumes
@@ -105,9 +105,9 @@ list-attached-volumes() {
     local value
 
     value=$(ec2 describe-instances \
-                --instance-ids ${INSTANCE} \
-                --output text \
-                --query 'Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId')
+                --output=text \
+                --instance-ids="${INSTANCE}" \
+                --query='Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId')
 
     echo "${value}"
 }
@@ -146,11 +146,11 @@ new-volume-mkfs() {
     local volume
 
     volume=$(ec2 create-volume \
-                 --availability-zone "${ZONE}" \
-                 --volume-type "$1" --size "$2" \
-                 --output text --query 'VolumeId')
+                 --output=text \
+                 --availability-zone="${ZONE}" --volume-type="$1" --size="$2" \
+                 --query='VolumeId')
 
-    ec2 wait volume-available --volume-ids "${volume}"
+    ec2 wait volume-available --volume-ids="${volume}"
 
     local device
 
