@@ -25,7 +25,7 @@ fi
 # ----------------------------------------------------------------------------
 # Functions
 # ----------------------------------------------------------------------------
-{{ lookup('template', '../../aws-rc/templates/etc/aws.rc') }}
+{{ lookup('ansible.builtin.template', '../../aws-rc/templates/etc/aws.rc') }}
 # ----------------------------------------------------------------------------
 # Create users and install respective .ssh/authorized_keys for public-keys'
 # metadata

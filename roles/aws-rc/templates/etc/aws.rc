@@ -2,21 +2,39 @@
 # ----------------------------------------------------------------------------
 # aws.rc
 # ----------------------------------------------------------------------------
+# Environment
+# ----------------------------------------------------------------------------
+if TOKEN="$(curl --silent --fail \
+                 --request PUT "http://169.254.169.254/latest/api/token" \
+                 --header "X-aws-ec2-metadata-token-ttl-seconds: 21600")"; then
+    export TOKEN
+else
+    unset TOKEN
+fi
+
+export INSTANCE_ID
+export AVAILABILITY_ZONE
+export REGION
+# ----------------------------------------------------------------------------
 # Functions
 # ----------------------------------------------------------------------------
 # metadata data
 metadata() {
-    curl -s "http://169.254.169.254/latest/meta-data/$1"
-}
+    local args=( "--silent" )
 
-export INSTANCE_ID
-export ZONE
-export REGION
+    if [ -n "${TOKEN}" ]; then
+        args+=( "--header" "X-aws-ec2-metadata-token: ${TOKEN}" )
+    fi
+
+    args+=( "http://169.254.169.254/latest/meta-data/$1" )
+
+    curl "${args[@]}"
+}
 
 INSTANCE_ID="$(cat /var/lib/cloud/data/instance-id 2>/dev/null \
                || aws sts get-caller-identity --output=text --query=UserId | cut -d : -f 2)"
-ZONE="$(metadata placement/availability-zone)"
-REGION="$(echo "${ZONE}" | sed 's/\(.*\)[a-z]/\1/')"
+AVAILABILITY_ZONE="$(metadata placement/availability-zone)"
+REGION="$(echo "${AVAILABILITY_ZONE}" | sed 's/\(.*\)[a-z]/\1/')"
 
 # ec2 command [argument ...]
 ec2() {
@@ -147,7 +165,7 @@ new-volume-mkfs() {
 
     volume=$(ec2 create-volume \
                  --output=text \
-                 --availability-zone="${ZONE}" --volume-type="$1" --size="$2" \
+                 --availability-zone="${AVAILABILITY_ZONE}" --volume-type="$1" --size="$2" \
                  --query='VolumeId')
 
     ec2 wait volume-available --volume-ids="${volume}"
