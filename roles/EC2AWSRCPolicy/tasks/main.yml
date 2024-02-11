@@ -1,0 +1,9 @@
+# main.yml
+---
+- name: IAM managed policies
+  amazon.aws.iam_managed_policy:
+    policy_name: "{{ item.key }}"
+    policy: "{{ item.value }}"
+  loop: "{{ managed_policies | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
