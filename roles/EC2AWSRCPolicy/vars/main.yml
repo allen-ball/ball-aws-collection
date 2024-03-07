@@ -10,10 +10,11 @@ managed_policies:
           - ec2:DescribeInstances
         Resource:
           - '*'
-      - Sid: AttachVolumes
+      - Sid: AttachAndDetachVolumes
         Effect: Allow
         Action:
           - ec2:AttachVolume
+          - ec2:DetachVolume
         Resource:
           - arn:aws:ec2:*:*:volume/*
           - arn:aws:ec2:*:*:instance/*
