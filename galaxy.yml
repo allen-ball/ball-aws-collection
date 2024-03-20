@@ -1,6 +1,6 @@
 namespace: ball
 name: aws
-version: 3.0.1
+version: 3.0.2
 readme: README.md
 authors:
   - Allen D. Ball <ball@hcf.dev>

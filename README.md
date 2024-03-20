@@ -51,6 +51,7 @@ These scripts require the EC2 role include the following
             "Effect": "Allow",
             "Action": [
                 "ec2:CreateTags",
+                "ec2:DeleteTags",
                 "ec2:CreateVolume"
             ],
             "Resource": [
