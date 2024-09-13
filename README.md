@@ -29,6 +29,7 @@ These scripts require the EC2 role include the following
             "Sid": "DescribeInstances",
             "Effect": "Allow",
             "Action": [
+                "ec2:DescribeImages",
                 "ec2:DescribeInstances"
             ],
             "Resource": [

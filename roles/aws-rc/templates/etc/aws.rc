@@ -15,6 +15,7 @@ fi
 export INSTANCE_ID
 export AVAILABILITY_ZONE
 export REGION
+export IMAGE_ID
 # ----------------------------------------------------------------------------
 # Functions
 # ----------------------------------------------------------------------------
@@ -40,6 +41,11 @@ REGION="$(echo "${AVAILABILITY_ZONE}" | sed 's/\(.*\)[a-z]/\1/')"
 ec2() {
     aws ec2 --region="${REGION}" "$@"
 }
+
+IMAGE_ID="$(ec2 describe-instances \
+                --output=text \
+                --instance-ids="${INSTANCE_ID}" \
+                --query='Reservations[*].Instances[0].ImageId')"
 
 # ec2-get-tag-value resource-id key
 ec2-get-tag-value() {
