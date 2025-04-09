@@ -142,7 +142,18 @@ next-unattached-block-device() {
     local available
 
     attached=($(lsblk -ndo NAME | grep -v loop))
-    available=($(echo -e "${attached[0]:0:-1}"{a..z}\\n))
+
+    for i in "${!attached[@]}"; do
+        if [[ "${attached[$i]}" == nvme* ]]; then
+            attached[i]=$(ebsnvme-id -b "/dev/${attached[$i]}")
+        fi
+    done
+
+    if [[ "${attached[0]}" == *a ]]; then
+        available=($(echo -e "${attached[0]:0:-1}"{a..z}\\n))
+    else # elif [[ "${attached[0]}" == *1 ]]; then
+        available=($(echo -e "${attached[0]:0:-1}"{1..9}\\n))
+    fi
 
     for name in "${attached[@]}"; do
         available=(${available[@]//*${name}*})

@@ -6,8 +6,8 @@ export LANG=en_US.UTF-8
 export LC_ALL=${LANG}
 
 if [ -e /usr/bin/apt ]; then
-    apt -y update
-    apt -y install awscli
+    apt --yes update
+    apt --yes install amazon-ec2-utils awscli
 else
     yum -y update
 
@@ -76,6 +76,8 @@ if [ -n "${VOLUMES}" ]; then
             device=$(next-unattached-block-device)
 
             ec2-attach-volume ${volume} ${device}
+
+            device=$(readlink -f ${device})
 
             if [ "$(file -b -s ${device})" == "data" ]; then
                 volume-mkfs ${volume} ${device} ${fstype}
