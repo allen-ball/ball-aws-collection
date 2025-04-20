@@ -5,9 +5,10 @@
 export LANG=en_US.UTF-8
 export LC_ALL=${LANG}
 
-if [ -e /usr/bin/apt ]; then
-    apt --yes update
-    apt --yes install amazon-ec2-utils awscli
+if [ -e /usr/bin/apt-get ]; then
+    apt-get --yes update
+    apt-get --yes install awscli
+    apt-get --yes install amazon-ec2-utils || true
 else
     yum -y update
 
