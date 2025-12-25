@@ -1,25 +1,76 @@
-ball-aws-collection
-===================
+# Ball AWS Collection
 
-A collection of miscellaneous [Ansible] roles for [AWS].
+[![Version](https://img.shields.io/badge/version-3.1.3-blue.svg)](galaxy.yml)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-| Role                                       | Description                                              |
-|--------------------------------------------|----------------------------------------------------------|
-| [roles/aws-user-data](roles/aws-user-data) | [AWS EC2 User Data Shell Script]                         |
-| [roles/aws-rc](roles/aws-rc)               | Common `/etc/aws.rc` script                              |
-| [roles/auto.ebs](roles/auto.ebs)           | [automount/autofs Executable Map for Amazon EBS Volumes] |
+A collection of miscellaneous [Ansible](https://www.ansible.com/) roles for [AWS](https://aws.amazon.com/).
 
-Add to `requirements.yml`:
+## Overview
 
-```yml
+**Collection Details:**
+- **Namespace**: `ball`
+- **Name**: `aws`
+- **Version**: 3.1.3
+- **License**: MIT
+- **Repository**: https://github.com/allen-ball/ball-aws-collection.git
+- **Author**: Allen D. Ball <ball@hcf.dev>
+- **Description**: A collection of miscellaneous Ansible roles for AWS
+
+## Installation
+
+Add to your `requirements.yml`:
+
+```yaml
 collections:
   - name: https://github.com/allen-ball/ball-aws-collection.git
     type: git
     version: trunk
 ```
 
-These scripts require the EC2 role include the following
-[policy](roles/EC2AWSRCPolicy):
+Install the collection:
+
+```bash
+ansible-galaxy collection install -r requirements.yml
+```
+
+## Prerequisites
+
+- Ansible 2.9+
+- Python 3.8+
+- AWS CLI configured with appropriate credentials
+
+## Available Roles
+
+| Role | Description | Documentation |
+|:-----|:------------|:--------------|
+| [aws-user-data] | Generate AWS EC2 User Data Shell Scripts for instance initialization | [README](roles/aws-user-data/README.md) |
+| [aws-rc] | Install common `/etc/aws.rc` script for AWS environment configuration | [README](roles/aws-rc/README.md) |
+| [auto-ebs] | Configure automount/autofs Executable Map for automatic Amazon EBS Volume mounting | [README](roles/auto-ebs/README.md) |
+| [EC2AWSRCPolicy] | IAM policy definition for EC2 instances using aws-rc and auto-ebs roles | [README](roles/EC2AWSRCPolicy/README.md) |
+
+[aws-user-data]: roles/aws-user-data
+[aws-rc]: roles/aws-rc
+[auto-ebs]: roles/auto-ebs
+[EC2AWSRCPolicy]: roles/EC2AWSRCPolicy
+
+## Quick Start
+
+```yaml
+# playbook-aws.yml
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - ball.aws
+  roles:
+    - role: aws-rc
+    - role: auto-ebs
+```
+
+## Required IAM Policy
+
+These roles require the EC2 instance role to include the [EC2AWSRCPolicy](roles/EC2AWSRCPolicy):
 
 ```json
 {
@@ -63,9 +114,32 @@ These scripts require the EC2 role include the following
 }
 ```
 
+## Key Features
 
-[Ansible]: https://www.ansible.com/
-[AWS]: https://aws.amazon.com/
+- **EC2 User Data**: Automated instance initialization scripts
+- **AWS Environment Configuration**: Standard `/etc/aws.rc` for environment variables
+- **Automatic EBS Mounting**: autofs integration for seamless EBS volume access
+- **IAM Policy Templates**: Pre-defined policies for secure operation
 
-[AWS EC2 User Data Shell Script]: https://blog.hcf.dev/article/2018-08-22-aws-user-data-script
-[automount/autofs Executable Map for Amazon EBS Volumes]: https://blog.hcf.dev/article/2018-08-20-auto-ebs-map
+## Additional Resources
+
+- [AWS EC2 User Data Shell Script Blog Post](https://blog.hcf.dev/article/2018-08-22-aws-user-data-script)
+- [automount/autofs Executable Map for Amazon EBS Volumes Blog Post](https://blog.hcf.dev/article/2018-08-20-auto-ebs-map)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit issues or pull requests.
+
+## Support
+
+For issues and questions:
+- Open an issue on [GitHub](https://github.com/allen-ball/ball-aws-collection/issues)
+- Contact: ball@hcf.dev
+
+## License
+
+This collection is licensed under the MIT License. See [LICENSE](LICENSE) file for details.
+
+---
+
+**Copyright © 2019-2025 Allen D. Ball. All rights reserved.**
