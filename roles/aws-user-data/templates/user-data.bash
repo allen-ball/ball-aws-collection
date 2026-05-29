@@ -7,7 +7,7 @@ export LC_ALL=${LANG}
 
 if [ -e /usr/bin/apt-get ]; then
     apt-get --yes update
-    apt-get --yes install awscli
+    snap install aws-cli --classic || apt-get --yes install awscli
     apt-get --yes install amazon-ec2-utils || true
 else
     yum -y update
