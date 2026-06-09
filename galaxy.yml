@@ -9,5 +9,6 @@ license_file: LICENSE
 tags: []
 dependencies: {}
 repository: https://github.com/allen-ball/ball-aws-collection.git
+requires_ansible: '>=2.15.0'
 build_ignore: []
 
